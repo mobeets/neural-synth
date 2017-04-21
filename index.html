@@ -5,21 +5,17 @@
 	<title>SHINY</title>
 
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-	<link rel="icon" type="image/png" sizes="174x174" href="./style/favicon.png">
+	<!-- <link rel="icon" type="image/png" sizes="174x174" href="./style/favicon.png"> -->
 
-	<script src="../build/Tone.js"></script>
-	<script src="./scripts/jquery.min.js"></script>
-	<script src="./scripts/draggabilly.js"></script>
-	<script src="./scripts/StartAudioContext.js"></script>
-	<script src="./scripts/Interface.js"></script>
-	<script src="https://tonejs.github.io/Logo/build/Logo.js"></script>
-	<script src="./scripts/nexusUI.js"></script>
+	<script src="scripts/lib/Tone.min.js"></script>
+	<script src="scripts/lib/jquery.min.js"></script>
+	<script src="scripts/lib/draggabilly.js"></script>
+	<script src="scripts/lib/StartAudioContext.js"></script>
+	<script src="scripts/lib/Interface.js"></script>
+	<script src="scripts/lib/Logo.js"></script>
+	<script src="scripts/lib/nexusUI.js"></script>
 
-	<link rel="stylesheet" type="text/css" href="./style/examples.css">
-
-	<script>
-		// jshint ignore: start
-	</script>
+	<link rel="stylesheet" type="text/css" href="static/style.css">
 
 </head>
 <body>	
@@ -33,6 +29,19 @@
 	<script>
 
 		//DRUMS//
+		var snareNotes = [null, 1, null, [1, 0.3]];
+		var kickNotes = [1, [1, [null, 0.3]], 1, [1, [null, 0.5]], 1, 1, 1, [1, [null, 0.8]]];
+		var bassNotes = [{time : "0:0", note : "C2", dur : "4n + 8n", prob: 1}, {time : "0:2", note : "C2", dur : "8n", prob : 0.6}, 
+			{time : "0:2 + 4t", note : "C2", dur : "8n", prob : 0.4}, {time : "0:2 + 4t*2", note : "C2", dur : "8n", prob : 0.9},
+			{time : "1:0", note : "C2", dur : "4n + 8n", prob : 1}, {time : "1:2", note : "C2", dur : "8n", prob : 0.6}, 
+			{time : "1:2 + 4t", note : "C2", dur : "8n", prob : 0.4}, {time : "1:2 + 4t*2", note : "E2", dur : "8n", prob : 0.9},
+			{time : "2:0", note : "F2", dur : "4n + 8n", prob : 1}, {time : "2:2", note : "F2", dur : "8n", prob : 0.6}, 
+			{time : "2:2 + 4t", note : "F2", dur : "8n", prob : 0.4}, {time : "2:2 + 4t*2", note : "F2", dur : "8n", prob : 0.9},
+			{time : "3:0", note : "F2", dur : "4n + 8n", prob : 1}, {time : "3:2", note : "F2", dur : "8n", prob : 0.6}, 
+			{time : "3:2 + 4t", note : "F2", dur : "8n", prob : 0.4}, {time : "3:2 + 4t*2", note : "B1", dur : "8n", prob : 0.9}];
+		var synthNotes = ["C2", "E2", "G2", "A2", 
+						  "C3", "D3", "E3", "G3", "A3", "B3", 
+						  "C4", "D4", "E4", "G4", "A4", "B4", "C5"];
 
 		//and a compressor
 		var drumCompress = new Tone.Compressor({
@@ -49,7 +58,7 @@
 
 		//hats
 		var hats = new Tone.Sampler({
-			"url" : "./audio/505/hh.mp3",
+			"url" : "./static/audio/hh.mp3",
 			"volume" : -10,
 			"envelope" : {
 				"attack" : 0.001,
@@ -69,7 +78,7 @@
 
 		//SNARE PART
 		var snare = new Tone.Sampler({
-			"url" : "./audio/505/snare.mp3", 
+			"url" : "./static/audio/snare.mp3", 
 			"envelope" : {
 				"attack" : 0.01,
 				"decay" : 0.05,
@@ -79,7 +88,7 @@
 
 		var snarePart = new Tone.Sequence(function(time, velocity){
 			snare.triggerAttackRelease(0, "8n", time, velocity);
-		}, [null, 1, null, [1, 0.3]]).start(0);
+		}, snareNotes).start(0);
 
 		var kick = new Tone.MembraneSynth({
 			"pitchDecay" : 0.01,
@@ -98,7 +107,7 @@
 			if (Math.random() < probability){
 				kick.triggerAttack("C1", time);
 			}
-		}, [1, [1, [null, 0.3]], 1, [1, [null, 0.5]], 1, 1, 1, [1, [null, 0.8]]], "2n").start(0);
+		}, kickNotes, "2n").start(0);
 		
 		// BASS
 		var bass = new Tone.FMSynth({
@@ -133,14 +142,7 @@
 			if (Math.random() < event.prob){
 				bass.triggerAttackRelease(event.note, event.dur, time);
 			}
-		}, [{time : "0:0", note : "C2", dur : "4n + 8n", prob: 1}, {time : "0:2", note : "C2", dur : "8n", prob : 0.6}, 
-			{time : "0:2 + 4t", note : "C2", dur : "8n", prob : 0.4}, {time : "0:2 + 4t*2", note : "C2", dur : "8n", prob : 0.9},
-			{time : "1:0", note : "C2", dur : "4n + 8n", prob : 1}, {time : "1:2", note : "C2", dur : "8n", prob : 0.6}, 
-			{time : "1:2 + 4t", note : "C2", dur : "8n", prob : 0.4}, {time : "1:2 + 4t*2", note : "E2", dur : "8n", prob : 0.9},
-			{time : "2:0", note : "F2", dur : "4n + 8n", prob : 1}, {time : "2:2", note : "F2", dur : "8n", prob : 0.6}, 
-			{time : "2:2 + 4t", note : "F2", dur : "8n", prob : 0.4}, {time : "2:2 + 4t*2", note : "F2", dur : "8n", prob : 0.9},
-			{time : "3:0", note : "F2", dur : "4n + 8n", prob : 1}, {time : "3:2", note : "F2", dur : "8n", prob : 0.6}, 
-			{time : "3:2 + 4t", note : "F2", dur : "8n", prob : 0.4}, {time : "3:2 + 4t*2", note : "B1", dur : "8n", prob : 0.9}]).start(0);
+		}, bassNotes).start(0);
 
 		bassPart.loop = true;
 		bassPart.loopEnd = "4m";
@@ -204,10 +206,6 @@
 			}
 		}).toMaster();
 
-		var synthNotes = ["C2", "E2", "G2", "A2", 
-						  "C3", "D3", "E3", "G3", "A3", "B3", 
-						  "C4", "D4", "E4", "G4", "A4", "B4", "C5"];
-
 		Tone.Transport.bpm.value = 125;
 
 		// GUI //
@@ -215,7 +213,7 @@
 		Interface.Button({
 			key : 32,
 			type : "toggle",
-			text : "Start",
+			text : "Play",
 			activeText : "Stop",
 			start : function(){
 				Tone.Transport.start("+0.1");
