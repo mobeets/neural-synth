@@ -1,0 +1,29 @@
+body {
+}
+.main-container {
+  padding: 3rem 1.5rem;
+  text-align: center;
+}
+
+/*#drums-toggle {
+	background: #ccc;
+	cursor: pointer;
+	border-top: solid 2px #eaeaea;
+	border-left: solid 2px #eaeaea;
+	border-bottom: solid 2px #777;
+	border-right: solid 2px #777;
+	padding: 5px 5px;       
+	}
+*/
+#drums-toggle {
+	background-color: white;
+	color: black;
+	border-color: #bbb;
+}
+#drums-toggle:hover {
+	background-color: #eee;
+}
+
+#drums-toggle.active {
+	background: #bbb;
+}

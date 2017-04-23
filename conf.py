@@ -15,18 +15,10 @@ root_settings = {
     '/': {
         'tools.staticdir.root': ROOTDIR,
     },
-    # '/favicon.ico': {
-    #     'tools.staticfile.on': True,
-    #     'tools.staticfile.filename': os.path.join(ROOTDIR, 'static', 'favicon.ico')
-    # },
     '/static': {
         'tools.staticdir.on': True,
-        'tools.staticdir.dir': 'static'
+        'tools.staticdir.dir': 'static',
+        'tools.expires.on'    : True,
+        'tools.expires.secs'  : 1
     },
-    # '/scripts': {
-    #     'tools.staticdir.on': True,
-    #     'tools.staticdir.dir': 'scripts',
-    #     'tools.expires.on'    : True,
-    #     'tools.expires.secs'  : 1 # expire in an hour
-    # },
 }
