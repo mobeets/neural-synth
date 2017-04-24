@@ -70,10 +70,8 @@ vaeModel.prototype.runModel = function(position) {
       console.log(data);
     },
     success: function(data) {
-      // $("#model-output").html(data.output.join(", "));
-      // $("#model-output").html(data.chord_notes);
-      detectChord(data.output);
       updateUserInsts(data.output);
+      detectChord(data.output);
     }
   });
 }
@@ -90,9 +88,7 @@ function detectChord(notes) {
       console.log(data);
     },
     success: function(data) {
-      // $("#model-output").html(data.output.join(", "));
       $("#model-output").html(data.output);
-      // updateUserInsts(data.output);
     }
   });
 }
@@ -204,6 +200,8 @@ function updateUserInsts(notes) {
   }
 }
 
+var curMilli;
+var lastMilli;
 function mousePressedOnCanvas() {
   var margin = ellipseSize/2 + 1;
   curX = constrain(mouseX, margin, width-margin);
@@ -211,14 +209,8 @@ function mousePressedOnCanvas() {
   var Z1 = map(curY, 0, height, -3, 3);
   var Z2 = map(curX, 0, width, -3, 3);
   vae.decodeFromPosition(Z1, Z2);
+  return false;
 }
-
-// function mouseReleased() {
-//   console.log("mouse released");
-//   for (var i=0; i<nUserInsts; i++) {
-//     userInsts[i].envelope.ramp(userInsts[i].osc, 0, 0.0, 0.0);
-//   }
-// }
 
 // draw a ball mapped to current latent position
 function draw() {
@@ -259,5 +251,5 @@ function addHandlers() {
 }
 
 $( document ).ready(function() {
-    addHandlers();
+  addHandlers();
 });

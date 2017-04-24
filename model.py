@@ -94,6 +94,7 @@ class Generator:
         return z_mean
 
 def detect_chord(notes):
+    if not notes: return ""
     cd = chord.Chord(notes)
     return cd.root().name + " " + cd.commonName
     # return chord.Chord(notes).pitchedCommonName
