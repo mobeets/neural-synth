@@ -15,15 +15,19 @@ body {
 	padding: 5px 5px;       
 	}
 */
-#drums-toggle {
+.inst-toggle {
 	background-color: white;
 	color: black;
 	border-color: #bbb;
 }
-#drums-toggle:hover {
+.inst-toggle:hover {
 	background-color: #eee;
 }
 
-#drums-toggle.active {
+.inst-toggle.active {
 	background: #bbb;
+}
+
+#notes {
+	border-color: white;
 }

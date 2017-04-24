@@ -7,8 +7,9 @@ from model import Generator
 
 class Root(object):
     def __init__(self):
-        self.model_file = 'static/model/lcvrnn15.h5'
-        self.generator = Generator(self.model_file)
+        self.gen_vrnn = Generator('static/models/vrnn.h5', model_type='vrnn')
+        self.gen_vae = Generator('static/models/vae.h5', model_type='vae')
+        self.gen_source = 'vae'
 
     @cherrypy.expose
     def index(self):
@@ -20,9 +21,16 @@ class Root(object):
     @cherrypy.tools.json_in()
     def decode(self):
         result = {"operation": "request", "result": "success"}
-        content = cherrypy.request.json
-        x = self.generator.generate_as_notes(content)
-        result["output"] = x
+        gen_mdl = self.gen_vrnn if self.gen_source == 'vrnn' else self.gen_vae
+        result["output"] = gen_mdl.generate_as_notes(cherrypy.request.json)
+        return result
+
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    @cherrypy.tools.json_in()
+    def encode(self):
+        result = {"operation": "request", "result": "success"}
+        result["output"] = self.gen_vae.encode_as_notes(cherrypy.request.json)
         return result
 
 def main():

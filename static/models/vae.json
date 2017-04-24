@@ -1,0 +1,1 @@
+{"latent_dim": 2, "optimizer": "adam", "predict_next": false, "train_file": "../data/input/JSB Chorales.pickle", "run_name": "vae9", "original_dim": 88, "intermediate_dim": 88, "batch_size": 1, "model_dir": "../data/models", "num_epochs": 200, "log_dir": "../data/logs"}

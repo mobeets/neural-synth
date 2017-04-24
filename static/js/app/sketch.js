@@ -1,20 +1,22 @@
 var osc, env;
 var noise, noiseEnv;
 var part;
+var part2;
 var curX, curY;
 
 var ellipseSize = 30;
+
+var bpm = 60;
 
 var drumSound1;
 var drumSound2;
 var drumPart1 = [0, 0, 1, 0];
 var drumPart2 = [1, 1, 1, 1];
-
-var bpm = 60;
 var snarePart = [1, 1, 1, 1];
+var drumPhrases = [];
 
-var bassPart1 = [60, 65, 65, 65];
-var bassPart2 = [70, 70, 72, 72];
+var bassPart1 = [60, 60, 57, 57];
+var bassPart2 = [67, 67, 69, 69];
 var bassParts = [bassPart1, bassPart2];
 var bassInsts = [];
 var bassPhrases = [];
@@ -31,7 +33,6 @@ function vaeModel() {
 
 vaeModel.prototype.decodeFromPosition = function(x,y) {
   this.position = [x,y];
-  console.log(this.position);
   this.runModel(this.position);
 }
 
@@ -63,9 +64,11 @@ function setup() {
 
   vae = new vaeModel();
 
-  var canvas = createCanvas(displayWidth, displayHeight/2);
+  var windowSize = min(displayWidth, displayHeight/2);
+  var canvas = createCanvas(windowSize, windowSize);
+  // var canvas = createCanvas(displayWidth, displayHeight/2);
   // var canvas = createCanvas(width, height);
-  // canvas.parent("canvas-container");
+  canvas.parent("canvas-container");
   canvas.mousePressed(mousePressedOnCanvas);
   curX = displayHeight/2;
   curY = displayWidth/2;
@@ -80,23 +83,19 @@ function setup() {
   noiseEnv = new p5.Env(0.01, 0.5, 0.1, 0);
   noiseEnv.setInput(noise);
 
-  // init bass parts
+  // init drum phrases
+  part = new p5.Part(snarePart.length, 1/8);
+  drumPhrases[0] = new p5.Phrase('snare', playSnare, snarePart);
+  drumPhrases[1] = new p5.Phrase('drum1', playDrum1, drumPart1);
+  drumPhrases[2] = new p5.Phrase('drum2', playDrum2, drumPart2);
+
+  // init bass phrases
   for (var i=0; i<bassParts.length; i++) {
     bassInsts[i] = new getOsc(i);
     var playNote = bassInsts[i].playNote.bind(bassInsts[i]);
     bassPhrases[i] = new p5.Phrase('bass' + i.toString(), playNote, bassParts[i]);
   }
 
-  // build part
-  part = new p5.Part(bassParts[0].length, 1/8);
-  // part.addPhrase('snare', playSnare, snarePart);
-  // part.addPhrase('drum1', playDrum1, drumPart1);
-  // part.addPhrase('drum2', playDrum2, drumPart2);
-
-
-  // for (var i=0; i<bassParts.length; i++) {
-  //   part.addPhrase(bassPhrases[i]);
-  // }
   part.setBPM(bpm);
   part.loop();
   part.start();
@@ -155,3 +154,37 @@ function draw() {
   // strokeWeight(0);
   ellipse(curX, curY, ellipseSize, ellipseSize);
 }
+
+function toggleDrums() {
+  if($(this).hasClass('active')) {
+    // part.stop();
+    part.removePhrase('snare');
+    part.removePhrase('drum1');
+    part.removePhrase('drum2');
+  } else {
+    // part.start();
+    part.addPhrase(drumPhrases[0]);
+    part.addPhrase(drumPhrases[1]);
+    part.addPhrase(drumPhrases[2]);
+  }
+}
+function toggleBass() {
+  if($(this).hasClass('active')) {
+    for (var i=0; i<bassParts.length; i++) {
+      part.removePhrase('bass' + i.toString());
+    }
+  } else {
+    for (var i=0; i<bassParts.length; i++) {
+      part.addPhrase(bassPhrases[i]);
+    }
+  }
+}
+
+function addHandlers() {
+  $("#drums-toggle").click(toggleDrums);
+  $("#bass-toggle").click(toggleBass);
+}
+
+$( document ).ready(function() {
+    addHandlers();
+});
