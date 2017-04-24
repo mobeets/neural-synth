@@ -8,15 +8,19 @@ var ellipseSize = 30;
 
 var bpm = 60;
 
-var drumSound1;
-var drumSound2;
-var drumPart1 = [0, 0, 1, 0];
-var drumPart2 = [1, 1, 1, 1];
-var snarePart = [1, 1, 1, 1];
+var drumSoundSnare;
+var drumSoundHihat;
+var drumSoundBassDrum;
+var drumPartSnare = [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1];
+var drumPartHihat = [1, 0];
+var drumPartBassDrum = [1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0];
 var drumPhrases = [];
+var reverb1;
+var reverb2;
+var reverb3;
 
-var bassPart1 = [60, 60, 57, 57];
-var bassPart2 = [67, 67, 69, 69];
+var bassPart1 = [60-12, 60-12, 0, 0, 57-12, 57-12, 0, 57-12];
+var bassPart2 = [67-12, 67-12, 0, 0, 69-12, 69-12, 0, 69-12];
 var bassParts = [bassPart1, bassPart2];
 var bassInsts = [];
 var bassPhrases = [];
@@ -56,76 +60,98 @@ vaeModel.prototype.runModel = function(position) {
 
 function preload(){
   soundFormats('ogg', 'mp3');
-  drumSound1 = loadSound('static/audio/drum');
-  drumSound2 = loadSound('static/audio/studio-b');
+  drumSoundSnare = loadSound('static/audio/snare');
+  drumSoundHihat = loadSound('static/audio/hihat');
+  drumSoundBassDrum = loadSound('static/audio/bass-drum');
+
+  reverb1 = new p5.Reverb();
+  reverb2 = new p5.Reverb();
+  reverb3 = new p5.Reverb();
+  reverb1.process(drumSoundHihat, 2, 5);
+  reverb2.process(drumSoundSnare, 2, 5);
+  reverb3.process(drumSoundBassDrum, 2, 5);
 }
 
 function setup() {
 
+  // init VAE
   vae = new vaeModel();
 
+  // init window
   var windowSize = min(displayWidth, displayHeight/2);
   var canvas = createCanvas(windowSize, windowSize);
-  // var canvas = createCanvas(displayWidth, displayHeight/2);
-  // var canvas = createCanvas(width, height);
   canvas.parent("canvas-container");
   canvas.mousePressed(mousePressedOnCanvas);
   curX = displayHeight/2;
   curY = displayWidth/2;
 
+  // init user synth
   for (var i=0; i<nUserInsts; i++) {
-    userInsts[i] = new getOsc(i+10);    
+    userInsts[i] = new getUserOsc(i+10);    
   }
 
-  // init snare
-  noise = new p5.Noise('brown');
-  noise.start();
-  noiseEnv = new p5.Env(0.01, 0.5, 0.1, 0);
-  noiseEnv.setInput(noise);
-
   // init drum phrases
-  part = new p5.Part(snarePart.length, 1/8);
-  drumPhrases[0] = new p5.Phrase('snare', playSnare, snarePart);
-  drumPhrases[1] = new p5.Phrase('drum1', playDrum1, drumPart1);
-  drumPhrases[2] = new p5.Phrase('drum2', playDrum2, drumPart2);
+  part = new p5.Part(drumPartSnare.length, 1/16);
+  drumPhrases[0] = new p5.Phrase('drum-snare', playDrum1, drumPartSnare);
+  drumPhrases[1] = new p5.Phrase('drum-hihat', playDrum2, drumPartHihat);
+  drumPhrases[2] = new p5.Phrase('drum-bass', playBassDrum, drumPartBassDrum);
 
   // init bass phrases
   for (var i=0; i<bassParts.length; i++) {
-    bassInsts[i] = new getOsc(i);
+    bassInsts[i] = new getBassOsc(i);
     var playNote = bassInsts[i].playNote.bind(bassInsts[i]);
     bassPhrases[i] = new p5.Phrase('bass' + i.toString(), playNote, bassParts[i]);
   }
 
+  // start playing part
   part.setBPM(bpm);
   part.loop();
   part.start();
 
 }
 
-function getOsc(ind) {
+function getBassOsc(ind) {
   this.ind = ind;
   this.osc = new p5.SinOsc();
   this.osc.amp(0.0);
-  this.envelope = new p5.Env(0.015, 0.16, 0.20, 0.12, 3.6, 0.00);
+  this.osc.start();
+  // this.envelope = new p5.Env(0.015, 0.16, 0.20, 0.12, 3.6, 0.00);
+  this.envelope = new p5.Env(0.01, 0.5, 0.20, 0.4, 0.0, 0.0);
+}
+
+getBassOsc.prototype.playNote = function(time, params) {
+  this.note = params;
+  this.freqValue = midiToFreq(this.note);
+  this.osc.freq(this.freqValue);
+  this.envelope.play(this.osc, 0, 0.2);
+}
+
+function getUserOsc(ind) {
+  this.ind = ind;
+  this.osc = new p5.SinOsc();
+  this.osc.amp(0.0);
+  this.envelope = new p5.Env(0.01, 0.16, 0.40, 0.1, 3.6, 0.0);
   this.osc.start();
 }
 
-getOsc.prototype.playNote = function(time, params) {
+getUserOsc.prototype.playNote = function(time, params) {
   this.note = params;
   this.freqValue = midiToFreq(this.note);
   this.osc.freq(this.freqValue);
   this.envelope.play(this.osc);
 }
 
-function playSnare(time, params) {
-  noiseEnv.play(noise, time);
-}
-
 function playDrum1(time, params) {
-  drumSound1.play();
+  drumSoundSnare.setVolume(0.4);
+  drumSoundSnare.play();
 }
 function playDrum2(time, params) {
-  drumSound2.play();
+  drumSoundHihat.setVolume(0.4);
+  drumSoundHihat.play();
+}
+function playBassDrum(time, params) {
+  drumSoundBassDrum.setVolume(0.4);
+  drumSoundBassDrum.play();
 }
 
 function updateUserInsts(notes) {
@@ -147,6 +173,13 @@ function mousePressedOnCanvas() {
   vae.decodeFromPosition(Z1, Z2);
 }
 
+// function mouseReleased() {
+//   console.log("mouse released");
+//   for (var i=0; i<nUserInsts; i++) {
+//     userInsts[i].envelope.ramp(userInsts[i].osc, 0, 0.0, 0.0);
+//   }
+// }
+
 // draw a ball mapped to current latent position
 function draw() {
   background(245);
@@ -158,9 +191,9 @@ function draw() {
 function toggleDrums() {
   if($(this).hasClass('active')) {
     // part.stop();
-    part.removePhrase('snare');
-    part.removePhrase('drum1');
-    part.removePhrase('drum2');
+    part.removePhrase('drum-snare');
+    part.removePhrase('drum-hihat');
+    part.removePhrase('drum-bass');
   } else {
     // part.start();
     part.addPhrase(drumPhrases[0]);
