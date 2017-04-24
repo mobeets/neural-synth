@@ -2,6 +2,7 @@ import json
 import numpy as np
 from keras.utils import to_categorical
 from app import vrnn, vae
+from music21 import chord
 
 def sample_z(args):
     Z_mean, Z_log_var = args
@@ -91,8 +92,6 @@ class Generator:
         z_mean, z_logvar = self.enc_model.predict(x_t, batch_size=1)
         z_mean = np.squeeze(z_mean).tolist()
         return z_mean
-
-from music21 import chord
 
 def detect_chord(notes):
     cd = chord.Chord(notes)
