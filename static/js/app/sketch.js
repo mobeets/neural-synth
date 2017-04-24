@@ -6,7 +6,7 @@ var curX, curY;
 
 var ellipseSize = 30;
 
-var bpm = 60;
+var bpm = 70;
 
 var drumSoundSnare;
 var drumSoundHihat;
@@ -19,15 +19,33 @@ var reverb1;
 var reverb2;
 var reverb3;
 
-var bassPart1 = [60-12, 60-12, 0, 0, 57-12, 57-12, 0, 57-12];
-var bassPart2 = [67-12, 67-12, 0, 0, 69-12, 69-12, 0, 69-12];
-var bassParts = [bassPart1, bassPart2];
 var bassInsts = [];
 var bassPhrases = [];
 
 var vae;
 var nUserInsts = 10;
 var userInsts = [];
+
+function makeBassPart(theme, nPerNote, offsets, offsetReps) {
+  var bassPart = [];
+  var c = 0;
+  for (var i=0; i<offsets.length; i++) {
+    var nPerMeasure = offsetReps[i];
+    for (var j=0; j<nPerMeasure; j++) {
+      for (var k=0; k<theme.length; k++) {
+        for (var l=0; l<nPerNote; l++) {
+          bassPart[c] = theme[k] + offsets[i];
+          c += 1;
+        }
+      }
+    }
+  }
+  return bassPart;
+}
+
+var bassPart1 = makeBassPart([60, 60, 60, 60], 2, [-12, -12], [3, 1]);
+var bassPart2 = makeBassPart([67, 67, 69, 69], 2, [-12, -12], [3, 1]);
+var bassParts = [bassPart1, bassPart2];
 
 function vaeModel() {
   this.position = [0, 0];
@@ -52,11 +70,33 @@ vaeModel.prototype.runModel = function(position) {
       console.log(data);
     },
     success: function(data) {
-      $("#model-output").html(data.output.join(", "));
+      // $("#model-output").html(data.output.join(", "));
+      // $("#model-output").html(data.chord_notes);
+      detectChord(data.output);
       updateUserInsts(data.output);
     }
   });
 }
+
+function detectChord(notes) {
+  $.ajax({
+    type: "POST",
+    url: "/detect",
+    data: JSON.stringify(notes),
+    contentType: 'application/json',
+    dataType: 'json',
+    error: function(data) {
+      console.log("ERROR");
+      console.log(data);
+    },
+    success: function(data) {
+      // $("#model-output").html(data.output.join(", "));
+      $("#model-output").html(data.output);
+      // updateUserInsts(data.output);
+    }
+  });
+}
+
 
 function preload(){
   soundFormats('ogg', 'mp3');
@@ -91,7 +131,7 @@ function setup() {
   }
 
   // init drum phrases
-  part = new p5.Part(drumPartSnare.length, 1/16);
+  part = new p5.Part(bassParts[0].length, 1/16);
   drumPhrases[0] = new p5.Phrase('drum-snare', playDrum1, drumPartSnare);
   drumPhrases[1] = new p5.Phrase('drum-hihat', playDrum2, drumPartHihat);
   drumPhrases[2] = new p5.Phrase('drum-bass', playBassDrum, drumPartBassDrum);

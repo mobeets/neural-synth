@@ -3,7 +3,7 @@ import os.path
 import cherrypy
 import numpy as np
 import conf
-from model import Generator
+from model import Generator, detect_chord
 
 class Root(object):
     def __init__(self):
@@ -23,6 +23,14 @@ class Root(object):
         result = {"operation": "request", "result": "success"}
         gen_mdl = self.gen_vrnn if self.gen_source == 'vrnn' else self.gen_vae
         result["output"] = gen_mdl.generate_as_notes(cherrypy.request.json)
+        return result
+
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    @cherrypy.tools.json_in()
+    def detect(self):
+        result = {"operation": "request", "result": "success"}
+        result["output"] = detect_chord(cherrypy.request.json)
         return result
 
     @cherrypy.expose

@@ -92,6 +92,13 @@ class Generator:
         z_mean = np.squeeze(z_mean).tolist()
         return z_mean
 
+from music21 import chord
+
+def detect_chord(notes):
+    cd = chord.Chord(notes)
+    return cd.root().name + " " + cd.commonName
+    # return chord.Chord(notes).pitchedCommonName
+
 if __name__ == '__main__':
     P = Generator('static/model/vrnn.h5')
     z_t = np.array([-2.988,-2.928])

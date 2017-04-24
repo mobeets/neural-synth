@@ -25,7 +25,9 @@ body {
 }
 
 .inst-toggle.active {
-	background: #bbb;
+	/*background: #bbb;*/
+	background: #3762a8;
+	color: white;
 }
 
 #notes {
