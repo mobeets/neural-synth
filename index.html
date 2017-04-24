@@ -62,10 +62,10 @@
     <div class="container">
       <div class="main-container">
         <h1>Neural synth</h1>
-        <p class="lead">Using variational autoencoders to make probabilistic music.</p>
+        <p class="lead">Make music with a variational autoencoder.</p>
         <div class="row">
           <div class="col-md-2"></div>
-          <p class="col-md-8 text-justify">Variational autoencoders are generative neural networks that learn how to generate music using a low-dimensional latent space. If we map the latent space to a pad controller (as below), clicking on the pad tells the autoencoder to output the notes corresponding to that pad position. Because the output of the autoencoder is probabilistic, you won't get exactly the same notes every time.</p>
+          <p class="col-md-8 text-justify">A variational autoencoder (<a href="https://arxiv.org/abs/1606.05908"><q>VAE</q></a>) is a neural network that learns to generate data from a low-dimensional latent space. Below, the locations on the pad controller are mapped to values in the latent space. Clicking on the pad tells the autoencoder to output the notes corresponding to that location. Because the output of the autoencoder is probabilistic, you won't get exactly the same notes every time.</p>
         </div>
         <hr>
         <!-- <p class="text-center">Notes decoded: <span id="model-output"></span></p> -->
@@ -91,7 +91,7 @@
       <hr>
       <div class="row">
         <div class="col-md-2"></div>
-        <p class="col-md-8 text-justify">This network was trained on 382 of Bach's four-part chorales transposed to Cmaj or Cmin (<a href="http://www-etud.iro.umontreal.ca/~boulanni/icml2012">source</a>). Code and more information is available <a href="https://github.com/mobeets/vrnn">here</a>.</p>
+        <p class="col-md-8 text-justify">The network was trained on 382 of Bach's four-part chorales transposed to Cmaj or Cmin (<a href="http://www-etud.iro.umontreal.ca/~boulanni/icml2012">source</a>). Code and more information is available <a href="https://github.com/mobeets/vrnn">here</a>.</p>
       </div>
     </div>
   </body>
