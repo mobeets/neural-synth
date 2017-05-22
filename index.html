@@ -80,6 +80,14 @@
           <p class="lead col-md-4">Click the pad below to make music with a variational autoencoder.</p>
         </div>
         <!-- <p class="text-center">Notes decoded: <span id="model-output"></span></p> -->
+        <div class="row">
+          <div class="col-md-4"></div>
+          <div class="col-md-4">
+            <div class="btn-group" role="group" aria-label="...">
+              <button id="notes" class="btn btn-default" type="button"><i class="fa fa-music" aria-hidden="true"></i>: <span id="model-output"></span></button>
+            </div>          
+          </div>
+        </div>
         <div id="canvas-container"></div>
         <div class="row">
           <div class="col-md-4"></div>
@@ -90,18 +98,23 @@
             <div class="btn-group" role="group" aria-label="...">
               <button id="bass-toggle" type="button" class="inst-toggle btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off"><i class="fa fa-bolt" aria-hidden="true"></i> Bass</button>
             </div>
-            <!-- <div class="btn-group" role="group" aria-label="...">
-              <button class="btn btn-default" type="button"><i class="fa fa-refresh" aria-hidden="true"></i> Reset state</button>
+            <!-- <div class="btn-group" role="group">
+              <input class="range-slider" type="range" min="0" max="9">
             </div> -->
             <div class="btn-group" role="group" aria-label="...">
-              <button id="notes" class="btn btn-default" type="button"><i class="fa fa-music" aria-hidden="true"></i>: <span id="model-output"></span></button>
+              <button id="key-toggle" type="button" class="inst-toggle btn btn-primary" autocomplete="off"><i class="fa fa-key" aria-hidden="true"></i> Key: <span id="cur-key">C maj</span></button>
             </div>
           </div>
         </div>
       </div>
       <div class="row">
-        <div class="col-md-2"></div>
-        <div class="col-md-8 text-justify"><p>A variational autoencoder (<a href="https://arxiv.org/abs/1606.05908"><q>VAE</q></a>) is a type of neural network that learns how to represent high-dimensional data with only a few numbers. In the case of music, we can train an autoencoder to represent all the notes and chords you might play on a piano using only two variables. You can think of this as the network learning a relationship between (x,y) values and a different collection of notes. To generate music, click on the pad below to choose an (x,y) value, and the autoencoder will use that value to generate a collection of notes.</p><p>The generating process is probabilistic, which means the same location on the pad won't generate the same exact notes every time. Still, nearby locations on the pad correspond to similar sounding chords, which makes it easy to learn to control after you play around with it for a while. For example, if you click in the top-left of the pad below, you will likely play a C major chord, while clicking in the top-right of the pad will usually play an A minor chord.</p><p>The notes the network generates depends a lot on the data you train it with. In this case, the autoencoder was trained on 382 of Bach's four-part chorales (<a href="http://www-etud.iro.umontreal.ca/~boulanni/icml2012">source</a>), with the songs transposed to either C major or A minor. Code and more information is available <a href="https://github.com/mobeets/vrnn">here</a>.</p>
+        <div class="col-md-2"></div>        
+        <div class="col-md-8 text-justify"><p>A variational autoencoder (<a href="https://arxiv.org/abs/1606.05908"><q>VAE</q></a>) is a type of neural network that learns how to represent high-dimensional data with only a few numbers. In the case of music, we can train an autoencoder to represent all the notes and chords you might play on a piano using only two variables. You can think of this as the network learning a relationship between (x,y) values and a different collection of notes. To generate music, click on the pad below to choose an (x,y) value, and the autoencoder will use that value to generate a collection of notes.</p><p>The generating process is probabilistic, which means the same location on the pad won't generate the same exact notes every time. Still, nearby locations on the pad correspond to similar sounding chords, which makes it easy to learn to control after you play around with it for a while. For example, if you click in the top-left of the pad below, you will likely play a C major chord, while clicking in the top-right of the pad will usually play an A minor chord.</p><p>The notes the network generates depends a lot on the data you train it with. In this case, the autoencoder was trained on 382 of Bach's four-part chorales (<a href="http://www-etud.iro.umontreal.ca/~boulanni/icml2012">source</a>), with the songs transposed to either C major or A minor.</p>
+        <p> Listen below to the results when you use a VAE (and two other similar models) to generate an entire song.</p>
+        <p style="text-align: center">
+        <iframe width="356" height="200" src="https://www.youtube.com/embed/VF9i9JpEtg8?rel=0" frameborder="0" allowfullscreen></iframe>
+        </p>
+        <p>Code and more information is available <a href="https://github.com/mobeets/vrnn">here</a>.</p>
         </div>
       </div>
       <hr>
