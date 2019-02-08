@@ -108,6 +108,12 @@ function preload(){
   reverb3.process(drumSoundBassDrum, 2, 5);
 }
 
+function touchStarted() {
+  if (getAudioContext().state !== 'running') {
+    getAudioContext().resume();
+  }
+}
+
 function setup() {
 
   // init VAE
@@ -245,9 +251,46 @@ function toggleBass() {
   }
 }
 
+function changeKey() {
+  $.ajax({
+    type: "POST",
+    url: "/changekey",
+    data: JSON.stringify($(".range-slider").val()),
+    contentType: 'application/json',
+    dataType: 'json',
+    error: function(data) {
+      console.log("ERROR");
+      console.log(data);
+    },
+    success: function(data) {
+    }
+  });
+}
+
+var curInd = 0;
+function toggleKey() {
+  curInd = (curInd + 1);
+  $.ajax({
+    type: "POST",
+    url: "/changekey",
+    data: JSON.stringify(curInd),
+    contentType: 'application/json',
+    dataType: 'json',
+    error: function(data) {
+      console.log("ERROR");
+      console.log(data);
+    },
+    success: function(data) {
+      $("#cur-key").html(data["output"]);
+    }
+  });
+}
+
 function addHandlers() {
   $("#drums-toggle").click(toggleDrums);
   $("#bass-toggle").click(toggleBass);
+  $("#key-toggle").click(toggleKey);
+  // $(".range-slider").click(changeKey);
 }
 
 $( document ).ready(function() {

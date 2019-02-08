@@ -33,3 +33,8 @@ body {
 #notes {
 	border-color: white;
 }
+
+input[type=range] {
+	width: 100%;
+	margin-left: 20px;
+}

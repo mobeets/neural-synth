@@ -1,7 +1,7 @@
 import json
 import numpy as np
 from keras.utils import to_categorical
-from app import vrnn, vae
+from app import vrnn, vae, clvae
 from music21 import chord
 
 def sample_z(args):
@@ -12,9 +12,6 @@ def sample_z(args):
 def sample_x(x_mean):
     return 1.0*(np.random.rand(*x_mean.squeeze().shape) <= x_mean)
 
-# def notes_to_freqs(notes, offset=21, base=440):
-#     return [int((base/32)*np.power(2, (x - 9.) / 12)) for x in notes]
-
 class Generator:
     def __init__(self, model_file, model_type='vrnn', x_seed=None):
         self.model_file = model_file
@@ -23,10 +20,14 @@ class Generator:
         self.args = json.load(open(model_file.replace('.h5', '.json')))
         self.model, self.enc_model, self.dec_model = self.load_models(self.model_type)
         self.init_models(self.model_type)
+        keys = ["C maj", "C min"]
+        self.keymap = dict(zip(xrange(len(keys)), keys))
 
     def load_models(self, model_type):
         if model_type == 'vrnn':
             load_model_fcn = vrnn.load_models
+        elif model_type == 'clvae':
+            load_model_fcn = clvae.load_models
         else:
             load_model_fcn = vae.load_models
         return load_model_fcn(self.args, self.model_file)
@@ -41,6 +42,12 @@ class Generator:
                 self.x_prev = np.zeros((1, 1, self.args['original_dim']))
                 z_t = np.array([-2.988,-2.928])
                 self.generate(z_t[None,None,:])
+        elif model_type == 'clvae':
+            self.w = to_categorical(0, self.args['n_classes'])
+            self.use_w = True
+            self.args['use_x_prev'] = False
+            z_t = np.array([-2.988,-2.928])
+            self.generate(z_t[None,:])
         else:
             self.use_w = False
             self.args['use_x_prev'] = False
@@ -48,6 +55,9 @@ class Generator:
             self.generate(z_t[None,:])
 
     def seed_models(self, x_seed, w=None):
+        """
+        n.b. only applies to vrnn
+        """
         original_dim = x_seed.shape[-1]
         nsteps = x_seed.shape[0]
         for t in xrange(nsteps):
@@ -67,11 +77,22 @@ class Generator:
         self.x_prev = x_t
         return x_t
 
+    def change_key(self, wval):
+        wval = int(wval) % self.args['n_classes']
+        if wval >= 0 and wval < self.args['n_classes']:
+            self.w = to_categorical(wval, self.args['n_classes'])
+        key = np.where(self.w)[1][0]
+        key = self.keymap.get(key, key)
+        return key
+
     def generate_as_notes(self, z_t, w=None, offset=21):
         if type(z_t) is not np.ndarray:
             z_t = np.array(z_t)
         if len(z_t.shape) == 1 and self.use_w:
-            z_t = z_t[None,None,:]
+            if self.model_type == 'clvae':
+                z_t = z_t[None,:]
+            else:
+                z_t = z_t[None,None,:]
         elif len(z_t.shape) == 1:
             z_t = z_t[None,:]
         if self.use_w:
@@ -100,6 +121,6 @@ def detect_chord(notes):
     # return chord.Chord(notes).pitchedCommonName
 
 if __name__ == '__main__':
-    P = Generator('static/model/vrnn.h5')
+    P = Generator('static/models/clvae.h5', model_type='clvae')
     z_t = np.array([-2.988,-2.928])
-    print P.generate(z_t[None,None,:])
+    print P.generate(z_t[None,:])

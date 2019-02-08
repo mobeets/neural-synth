@@ -7,9 +7,9 @@ from model import Generator, detect_chord
 
 class Root(object):
     def __init__(self):
-        self.gen_vrnn = Generator('static/models/vrnn.h5', model_type='vrnn')
-        self.gen_vae = Generator('static/models/vae.h5', model_type='vae')
-        self.gen_source = 'vae'
+        # self.gen_mdl = Generator('static/models/vrnn.h5', model_type='vrnn')
+        # self.gen_mdl = Generator('static/models/vae.h5', model_type='vae')
+        self.gen_mdl = Generator('static/models/clvae2.h5', model_type='clvae')
 
     @cherrypy.expose
     def index(self):
@@ -19,10 +19,17 @@ class Root(object):
     @cherrypy.expose
     @cherrypy.tools.json_out()
     @cherrypy.tools.json_in()
+    def changekey(self):
+        result = {"operation": "request", "result": "success"}
+        result["output"] = self.gen_mdl.change_key(cherrypy.request.json)
+        return result
+
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    @cherrypy.tools.json_in()
     def decode(self):
         result = {"operation": "request", "result": "success"}
-        gen_mdl = self.gen_vrnn if self.gen_source == 'vrnn' else self.gen_vae
-        result["output"] = gen_mdl.generate_as_notes(cherrypy.request.json)
+        result["output"] = self.gen_mdl.generate_as_notes(cherrypy.request.json)
         return result
 
     @cherrypy.expose
@@ -38,7 +45,7 @@ class Root(object):
     @cherrypy.tools.json_in()
     def encode(self):
         result = {"operation": "request", "result": "success"}
-        result["output"] = self.gen_vae.encode_as_notes(cherrypy.request.json)
+        result["output"] = self.gen_mdl.encode_as_notes(cherrypy.request.json)
         return result
 
 def main():

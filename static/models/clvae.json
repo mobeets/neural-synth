@@ -1,0 +1,1 @@
+{"latent_dim": 2, "optimizer": "adam-wn", "predict_next": false, "warm_up": 0, "intermediate_class_dim": 88, "train_file": "../data/input/JSB Chorales_music21.pickle", "run_name": "clvae_all10_2d", "model_dir": "../data/models", "original_dim": 88, "intermediate_dim": 88, "log_dir": "../data/logs", "batch_size": 5, "n_classes": 10, "num_epochs": 200, "class_weight": 0.5}
