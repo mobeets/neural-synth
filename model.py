@@ -1,8 +1,14 @@
 import json
 import numpy as np
-from keras.utils import to_categorical
-from app import vrnn, vae, clvae
+# from keras.utils import to_categorical
+# from app import vrnn, vae, clvae
 from music21 import chord
+
+to_categorical = lambda x: None
+class clvae:
+    @staticmethod
+    def load_models(x):
+        return None
 
 def sample_z(args):
     Z_mean, Z_log_var = args
