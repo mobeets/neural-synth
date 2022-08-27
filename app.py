@@ -3,7 +3,10 @@ import os.path
 import cherrypy
 import numpy as np
 import conf
-from model import Generator, detect_chord
+# from model import Generator, detect_chord
+
+Generator = lambda x: None
+detect_chord = lambda x: None
 
 class Root(object):
     def __init__(self):
