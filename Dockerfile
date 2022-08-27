@@ -17,10 +17,11 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-RUN python manage.py collectstatic --noinput
+# RUN python manage.py collectstatic --noinput
 
 
 EXPOSE 8080
 
 # replace APP_NAME with module name
-CMD ["gunicorn", "--bind", ":8080", "--workers", "2", "demo.wsgi"]
+# CMD ["gunicorn", "--bind", ":8080", "--workers", "2", "demo.wsgi"]
+CMD ["python", "app.py"]
