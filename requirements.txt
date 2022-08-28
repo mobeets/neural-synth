@@ -4,3 +4,4 @@ Keras==2.0.0
 music21==3.1.0
 numpy==1.19.5
 tensorflow==1.15
+protobuf<=3.20.0
