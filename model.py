@@ -1,14 +1,8 @@
 import json
 import numpy as np
-# from keras.utils import to_categorical
-# from app import vrnn, vae, clvae
+from keras.utils import to_categorical
+from app import vrnn, vae, clvae
 from music21 import chord
-
-to_categorical = lambda x: None
-class clvae:
-    @staticmethod
-    def load_models(x):
-        return None
 
 def sample_z(args):
     Z_mean, Z_log_var = args
@@ -27,7 +21,7 @@ class Generator:
         self.model, self.enc_model, self.dec_model = self.load_models(self.model_type)
         self.init_models(self.model_type)
         keys = ["C maj", "C min"]
-        self.keymap = dict(zip(xrange(len(keys)), keys))
+        self.keymap = dict(list(zip(list(range(len(keys))), keys)))
 
     def load_models(self, model_type):
         if model_type == 'vrnn':
@@ -66,7 +60,7 @@ class Generator:
         """
         original_dim = x_seed.shape[-1]
         nsteps = x_seed.shape[0]
-        for t in xrange(nsteps):
+        for t in range(nsteps):
             self.x_prev = x_seed[t][None,None,:]
             z_mean_t, z_log_var_t, w_t = self.enc_model.predict(self.x_prev)
             w_t = w_t if w is None else w
@@ -129,4 +123,4 @@ def detect_chord(notes):
 if __name__ == '__main__':
     P = Generator('static/models/clvae.h5', model_type='clvae')
     z_t = np.array([-2.988,-2.928])
-    print P.generate(z_t[None,:])
+    print(P.generate(z_t[None,:]))

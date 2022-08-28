@@ -3,15 +3,10 @@ import os.path
 import cherrypy
 import numpy as np
 import conf
-# from model import Generator, detect_chord
-
-Generator = lambda x: None
-detect_chord = lambda x: None
+from model import Generator, detect_chord
 
 class Root(object):
     def __init__(self):
-        # self.gen_mdl = Generator('static/models/vrnn.h5', model_type='vrnn')
-        # self.gen_mdl = Generator('static/models/vae.h5', model_type='vae')
         self.gen_mdl = Generator('static/models/clvae2.h5', model_type='clvae')
 
     @cherrypy.expose

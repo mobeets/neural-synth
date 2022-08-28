@@ -3,7 +3,8 @@ from keras import backend as K
 from keras.layers import Input, Dense, Lambda, concatenate
 from keras.models import Model
 
-def make_decoder(model, (latent_dim_0, latent_dim), class_dim, batch_size=1):
+def make_decoder(model, xxx_todo_changeme, class_dim, batch_size=1):
+    (latent_dim_0, latent_dim) = xxx_todo_changeme
     z = Input(batch_shape=(batch_size, latent_dim), name='z')
     w = Input(batch_shape=(batch_size, class_dim), name='w')
     wz = concatenate([w, z], axis=-1)
@@ -23,10 +24,10 @@ def make_decoder(model, (latent_dim_0, latent_dim), class_dim, batch_size=1):
 def LL_frame(y, yhat, original_dim=88):
     return original_dim*losses.binary_crossentropy(y, yhat)
 
-def get_model(batch_size, original_dim,
-    (latent_dim_0, latent_dim),
-    (class_dim_0, class_dim), optimizer, class_weight=0.5):
+def get_model(batch_size, original_dim, xxx_todo_changeme1, xxx_todo_changeme2, optimizer, class_weight=0.5):
 
+    (latent_dim_0, latent_dim) = xxx_todo_changeme1
+    (class_dim_0, class_dim) = xxx_todo_changeme2
     x = Input(batch_shape=(batch_size, original_dim), name='x')
 
     # build label encoder
